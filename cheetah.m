@@ -1,6 +1,7 @@
 
 close all
 clear all
+clc
 load('TrainingSamplesDCT_8.mat');
 img = double(imread('cheetah.bmp')) / 255;
 m =8;
@@ -18,14 +19,36 @@ for j = 1 : fix(255/m)
       zigzag_data = [zigzag_data;zz];
     end
 end
-X = find2ndX(zigzag_data);
-subplot(1,3,1)
-histogram(X);
-%hold on
-subplot(1,3,2)
-histogram(find2ndX(TrainsampleDCT_BG));
-%hold on
-subplot(1,3,3)
-histogram(find2ndX(TrainsampleDCT_FG));
-%hist([X';find2ndX(TrainsampleDCT_FG)';find2ndX(TrainsampleDCT_BG)']);
 
+x_range = max([find2ndX(TrainsampleDCT_FG)',find2ndX(TrainsampleDCT_BG)']);
+%x_range = 20;
+
+
+X = find2ndX(zigzag_data);
+hist_fg = hist(find2ndX(TrainsampleDCT_FG),1:x_range);
+hist_bg = hist(find2ndX(TrainsampleDCT_BG),1:x_range);
+
+P_fg = size(TrainsampleDCT_FG,1)/(size(TrainsampleDCT_BG,1) + size(TrainsampleDCT_FG,1));
+P_bg = 1 - P_fg;
+
+p_X = hist(X,1:x_range) / size(X,1);
+
+p_x_given_fg = hist_fg / sum(hist_fg);
+
+p_fg_given_x = [];
+for x = 1 : x_range
+    if p_X(x) > 0
+        p_fg_given_x = [p_fg_given_x,p_x_given_fg(x) * P_fg/ p_X(x)];
+    else
+        p_fg_given_x = [p_fg_given_x,0];
+    end
+end
+%finish mask
+fg_mask = p_fg_given_x >= 0.5;
+
+%mapping mask
+fg_result = []
+for i = 1 : size(fg_mask,2)
+    
+end
+ 
