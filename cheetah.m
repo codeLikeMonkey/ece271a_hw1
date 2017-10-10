@@ -47,8 +47,22 @@ end
 fg_mask = p_fg_given_x >= 0.5;
 
 %mapping mask
-fg_result = []
+fg_result = zeros(size(X,1),1);
 for i = 1 : size(fg_mask,2)
-    
+    fg_result = (X == fg_mask(i) * i) | fg_result;
 end
+
+%fg_result
+new_img = img | 1;
+t = 0;
+for j = 1 : fix(255/m) 
+    for i = 1:fix(270/n)
+        t = t + 1;
+        new_img((j - 1)*n + 1 : j * n,(i - 1)*m + 1 : i * m ) = fg_result(t)*ones(8);
+    end
+end
+imshow(new_img);
+
+
+
  
