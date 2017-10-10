@@ -12,19 +12,17 @@ zigzag_data = [];
 X = [];
 for j = 1 : fix(255/m) 
     for i = 1:fix(270/n)
-      %t = t + 1;
-      %subplot(fix(255/m),fix(270/n),t);
-      %imshow(result{i,j});
       zz = zigzag(dct2(result{i,j}));
       zigzag_data = [zigzag_data;zz];
     end
 end
 
-x_range = max([find2ndX(TrainsampleDCT_FG)',find2ndX(TrainsampleDCT_BG)']);
-%x_range = 20;
+%x_range = max([find2ndX(TrainsampleDCT_FG)',find2ndX(TrainsampleDCT_BG)']);
+x_range = 100;
 
 
 X = find2ndX(zigzag_data);
+
 hist_fg = hist(find2ndX(TrainsampleDCT_FG),1:x_range);
 hist_bg = hist(find2ndX(TrainsampleDCT_BG),1:x_range);
 
@@ -53,14 +51,15 @@ for i = 1 : size(fg_mask,2)
 end
 
 %fg_result
-new_img = img | 1;
+new_img = [];
 t = 0;
-for j = 1 : fix(255/m) 
-    for i = 1:fix(270/n)
-        t = t + 1;
-        new_img((j - 1)*n + 1 : j * n,(i - 1)*m + 1 : i * m ) = fg_result(t)*ones(8);
+
+for j = 1 + n / 2 :1:size(img,2) - n /2 
+    for i = 1 + m/ 2 :1: size(img,1) - m /2
+        new_img(i,j) = fg_mask(find2ndX(zigzag(dct2(img(i - m/2 : i + m /2 - 1 , j - n/2 : j + n / 2 - 1)))));
     end
 end
+
 imshow(new_img);
 
 
