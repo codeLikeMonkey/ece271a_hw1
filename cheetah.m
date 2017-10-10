@@ -18,7 +18,7 @@ for j = 1 : fix(255/m)
 end
 
 %x_range = max([find2ndX(TrainsampleDCT_FG)',find2ndX(TrainsampleDCT_BG)']);
-x_range = 100;
+x_range = 64;
 
 
 X = find2ndX(zigzag_data);
@@ -38,7 +38,7 @@ for x = 1 : x_range
     if p_X(x) > 0
         p_fg_given_x = [p_fg_given_x,p_x_given_fg(x) * P_fg/ p_X(x)];
     else
-        p_fg_given_x = [p_fg_given_x,0];
+        p_fg_given_x = [p_fg_given_x,1];
     end
 end
 %finish mask
@@ -61,6 +61,11 @@ for j = 1 + n / 2 :1:size(img,2) - n /2
 end
 
 imshow(new_img);
+mask_img = imread('cheetah_mask.bmp') > 0;
+cheetah_mask = mask_img(1:size(new_img,1),1:size(new_img,2));
+figure 
+imshow(cheetah_mask)
+error_rate = sum(sum(abs(cheetah_mask - new_img))) / (size(new_img,1) * size(new_img,2)) * 100
 
 
 
